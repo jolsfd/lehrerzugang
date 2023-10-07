@@ -2,7 +2,12 @@ import "./style.css";
 import javascriptLogo from "./javascript.svg";
 import viteLogo from "/vite.svg";
 import { setupCounter } from "./counter.js";
-import { fetchWeek, getTeachers, getDaysByTeacherID, clearCache } from "./stundenplan.js";
+import {
+  fetchWeek,
+  getTeachers,
+  getDaysByTeacherID,
+  clearCache,
+} from "./stundenplan.js";
 
 // document.querySelector("#app").innerHTML = `
 //   <div>
@@ -49,37 +54,57 @@ function setupSelectTeacher(dataObj) {
 
   const selectedTeacherEl = document.getElementById("select-teacher");
   selectedTeacherEl.addEventListener("change", (event) => {
-    const selectedTeacher = document.getElementById("form-select-teacher").value;
+    const selectedTeacher = document.getElementById(
+      "form-select-teacher"
+    ).value;
 
     setupTimetable(data, selectedTeacher);
   });
 }
 
+function getTableForDayHtml(day){
+  let lessonsTableRowsHtml = "";
+
+    for (const lesson of day.lessons) {
+      lessonsTableRowsHtml += `
+        <tr>
+          <td>${lesson.stunde}</td>
+          <td>${lesson.raum}</td> 
+          <td>${lesson.klasse}</td>
+          <td>${
+            lesson.info ? `${lesson.fach} <b>${lesson.info}</b>` : lesson.fach
+          }</td>
+        </tr>`;
+    }
+
+    const tableHtml = `
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Raum</th>
+          <th>Klasse</th>
+          <th>Fach</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${lessonsTableRowsHtml}
+      </tbody>
+    </table>`
+
+    return tableHtml
+}
+
 // input wert ist eine list mit index als stunde und stundenobjekt als element
 // TODO: sicherstellen, dass lessons immer liste ist wenn die leer ist, ist auch okay
 function getDayHtml(day) {
-  if (day.lessons.length == 0){
-    return `
-    <div>
-      <p>${day.date}</p>
-      <p>${day.zusatz}</p>
-      <p>kein Unterricht<\p>
-    </div>
-    `
-  }
-
-  let lessonsHtml = "";
-
-  for (const lesson of day.lessons) {
-    lessonsHtml += `
-    <p>${lesson.stunde}: ${lesson.raum}; ${lesson.fach}; ${lesson.klasse}; ${lesson.info}<\p>`;
-  }
+  const tableHtml = day.lessons.length > 0 ? getTableForDayHtml(day) : `<b>kein Unterricht</b>`
 
   const dayHtml = `
   <div>
     <p>${day.date}</p>
     <p>${day.zusatz}</p>
-    ${lessonsHtml}
+    ${tableHtml}
   </div>
   `;
 
@@ -117,11 +142,11 @@ async function loadData() {
 }
 
 async function reloadData() {
-  console.log("reloaded")
-  document.getElementById("timetable").innerHTML = ""
-  document.getElementById("select-teacher").innerHTML = ""
-  await clearCache()
-  await setup()
+  console.log("reloaded");
+  document.getElementById("timetable").innerHTML = "";
+  document.getElementById("select-teacher").innerHTML = "";
+  await clearCache();
+  await setup();
 }
 
 // await loadData();
@@ -129,15 +154,17 @@ async function reloadData() {
 // setupTimetable(data, "Fkt");
 
 // console.log(data)a
-async function init(){
-  document.getElementById("reload-btn").addEventListener("click", (event) => {reloadData()})
-  await setup()
+async function init() {
+  document.getElementById("reload-btn").addEventListener("click", (event) => {
+    reloadData();
+  });
+  await setup();
 }
 
 async function setup() {
-  await loadData()
+  await loadData();
   setupSelectTeacher(data);
-  console.log(import.meta.env.VITE_CF_WORKER)
+  console.log(import.meta.env.VITE_CF_WORKER);
 }
 
-await init()
+await init();
