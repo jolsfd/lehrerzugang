@@ -1,12 +1,10 @@
 const CACHE_VERSION = 1;
 const CURRENT_CACHES = {
-  font: `stundenplan24-cache-v${CACHE_VERSION}`,
+  stundenplan24: `stundenplan24-cache-v${CACHE_VERSION}`,
 };
-const cache = await caches.open(CURRENT_CACHES.font);
+const cache = await caches.open(CURRENT_CACHES.stundenplan24);
 
-// const WORKER = "https://worker-empty-dust-2be4.frederik-35a.workers.dev/";
-
-const WORKER = import.meta.env.VITE_CF_WORKER
+const WORKER = import.meta.env.VITE_CF_WORKER;
 
 const dateStringOptions = {
   weekday: "long",
@@ -172,7 +170,7 @@ function getDayByTeacherID(teacherID, xmlDoc, dayIndex) {
     return {
       date: date,
       zusatz: "",
-      lessons: [],
+      lessons: null,
     };
   }
 
@@ -227,7 +225,7 @@ export async function getTeachers() {
 export async function clearCache() {
   const keys = await cache.keys();
 
-  for (let i = 0; i < keys.length; i++){
+  for (let i = 0; i < keys.length; i++) {
     if (await cache.delete(keys[i])) {
       console.log("deleted from cache 🗑️");
     }

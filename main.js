@@ -1,7 +1,3 @@
-import "./style.css";
-import javascriptLogo from "./javascript.svg";
-import viteLogo from "/vite.svg";
-import { setupCounter } from "./counter.js";
 import {
   fetchWeek,
   getTeachers,
@@ -9,27 +5,11 @@ import {
   clearCache,
 } from "./stundenplan.js";
 
-// document.querySelector("#app").innerHTML = `
-//   <div>
-//     <a href="https://vitejs.dev" target="_blank">
-//       <img src="${viteLogo}" class="logo" alt="Vite logo" />
-//     </a>
-//     <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-//       <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-//     </a>
-//     <h1>Hello Vite!</h1>
-//     <div class="card">
-//       <button id="counter" type="button"></button>
-//     </div>
-//     <p class="read-the-docs">
-//       Click on the Vite logo to learn more
-//     </p>
-//   </div>
-// `;
-
-// setupCounter(document.querySelector("#counter"));
-
 var data = null;
+
+const spinner = `<div class="spinner-border text-primary" role="status">
+<span class="visually-hidden">Loading...</span>
+</div>`
 
 function setupSelectTeacher(dataObj) {
   let optionsHtml = "";
@@ -41,7 +21,7 @@ function setupSelectTeacher(dataObj) {
   const select = `
   <select
     id="form-select-teacher"
-    class="form-select"
+    class="form-select mb-3"
     aria-label="Lehrerkürzel"
     value=""
   >
@@ -62,23 +42,33 @@ function setupSelectTeacher(dataObj) {
   });
 }
 
-function getTableForDayHtml(day){
+function getTableForDayHtml(day) {
+  if (!day.lessons){
+    return `<b>keine Daten verfügbar</b><hr>`
+  }
+
+  if (day.lessons.length == 0){
+    return `<p>kein Unterricht</p><hr>`
+  }
+
   let lessonsTableRowsHtml = "";
 
-    for (const lesson of day.lessons) {
-      lessonsTableRowsHtml += `
+  for (const lesson of day.lessons) {
+    lessonsTableRowsHtml += `
         <tr>
           <td>${lesson.stunde}</td>
           <td>${lesson.raum}</td> 
           <td>${lesson.klasse}</td>
           <td>${
-            lesson.info ? `${lesson.fach} <b>${lesson.info}</b>` : lesson.fach
+            lesson.info
+              ? `${lesson.fach} <span class="text-danger">${lesson.info}</span>`
+              : lesson.fach
           }</td>
         </tr>`;
-    }
+  }
 
-    const tableHtml = `
-    <table>
+  const tableHtml = `
+    <table class="table">
       <thead>
         <tr>
           <th>#</th>
@@ -90,21 +80,19 @@ function getTableForDayHtml(day){
       <tbody>
         ${lessonsTableRowsHtml}
       </tbody>
-    </table>`
+    </table>`;
 
-    return tableHtml
+  return tableHtml;
 }
 
 // input wert ist eine list mit index als stunde und stundenobjekt als element
 // TODO: sicherstellen, dass lessons immer liste ist wenn die leer ist, ist auch okay
 function getDayHtml(day) {
-  const tableHtml = day.lessons.length > 0 ? getTableForDayHtml(day) : `<b>kein Unterricht</b>`
-
   const dayHtml = `
   <div>
-    <p>${day.date}</p>
-    <p>${day.zusatz}</p>
-    ${tableHtml}
+    <p class="fs-4">${day.date}</p>
+    <p class="fw-bold text-danger">${day.zusatz}</p>
+    ${getTableForDayHtml(day)}
   </div>
   `;
 
@@ -116,6 +104,14 @@ function setupTimetable(dataObj, teacherID) {
   if (!teacherID) {
     return;
   }
+
+  document.getElementById(
+    "teacher-description"
+  ).innerHTML = `<p class="fs-3 text-center">Persönlicher Stundenplan - <span class="fw-bold">${teacherID}</span>
+  <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(
+    teacherID + import.meta.env.VITE_SEED
+  )}" alt="avatar" width="64" height="64"/>
+  </p>`;
 
   const days = getDaysByTeacherID(dataObj.docs, teacherID);
 
@@ -144,17 +140,14 @@ async function loadData() {
 async function reloadData() {
   console.log("reloaded");
   document.getElementById("timetable").innerHTML = "";
-  document.getElementById("select-teacher").innerHTML = "";
+  document.getElementById("select-teacher").innerHTML = spinner;
+  document.getElementById("teacher-description").innerHTML = "";
   await clearCache();
   await setup();
 }
 
-// await loadData();
-//setupSelectTeacher(data);
-// setupTimetable(data, "Fkt");
-
-// console.log(data)a
 async function init() {
+  document.getElementById("select-teacher").innerHTML = spinner;
   document.getElementById("reload-btn").addEventListener("click", (event) => {
     reloadData();
   });
