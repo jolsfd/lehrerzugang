@@ -157,7 +157,7 @@ async function init() {
 async function setup() {
   await loadData();
   setupSelectTeacher(data);
-  console.log(import.meta.env.VITE_CF_WORKER);
+  //console.log(import.meta.env.VITE_CF_WORKER);
 }
 
-await init();
+init();

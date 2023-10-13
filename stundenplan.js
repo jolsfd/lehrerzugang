@@ -2,7 +2,6 @@ const CACHE_VERSION = 1;
 const CURRENT_CACHES = {
   stundenplan24: `stundenplan24-cache-v${CACHE_VERSION}`,
 };
-const cache = await caches.open(CURRENT_CACHES.stundenplan24);
 
 const WORKER = import.meta.env.VITE_CF_WORKER;
 
@@ -36,6 +35,9 @@ function currentMonday() {
 }
 
 async function fetchPlan(dateVpMobil) {
+  // cache config
+  const cache = await caches.open(CURRENT_CACHES.stundenplan24);
+
   let url = WORKER;
 
   if (dateVpMobil) {
@@ -221,6 +223,8 @@ export async function getTeachers() {
 }
 
 export async function clearCache() {
+  const cache = await caches.open(CURRENT_CACHES.stundenplan24);
+
   const keys = await cache.keys();
 
   for (let i = 0; i < keys.length; i++) {
