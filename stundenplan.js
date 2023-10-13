@@ -28,13 +28,11 @@ function parseXml(rawXml) {
 
 function currentMonday() {
   const today = new Date();
-  // return new Date(
-  //   today.getFullYear(),
-  //   today.getMonth(),
-  //   today.getDate() - (((today.getDay() + 1) % 7) - 2)
-  // );
-
-  return new Date(2023, 8, 25);
+  return new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate() - (((today.getDay() + 1) % 7) - 2)
+  );
 }
 
 async function fetchPlan(dateVpMobil) {
