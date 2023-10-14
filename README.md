@@ -2,10 +2,19 @@
 
 ## Connect Cloudflare Pages to git repository
 
-## Deploy cloudflare worker
+## Develop locally
+
+Create a file ```.dev.vars```:
+```
+LOGIN=<LOGIN>
+SCHULNUMMER=<SCHULNUMMER>
+PASSWORD=<PASSWORD>
+```
 
 ```
-npx wrangler deploy -c wrangler.toml
+npm run cf-dev
 ```
 
-Afterwards add the secret env variables via the cloudflare dashboard to your worker.
+## Deploy
+
+Set the env variables from ```.dev.vars``` in the cloudflare dashboard. Make you select to encrypt these values.
