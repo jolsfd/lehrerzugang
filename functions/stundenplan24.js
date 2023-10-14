@@ -1,13 +1,11 @@
-export default {
-  async fetch(request, env, context) {
-    // constant values
-    const login = env.LOGIN
-    const password = env.PASSWORD
-    const schulnummer = env.SCHULNUMMER
+export async function onRequest(context) {
+    // constants
+    const login = context.env.LOGIN
+    const password = context.env.PASSWORD
+    const schulnummer = context.env.SCHULNUMMER
     const baseUrl = "https://www.stundenplan24.de/" + schulnummer + "/mobil/mobdaten/"
 
-    const url = new URL(request.url)
-    
+    const url = new URL(context.request.url)
     const date = url.searchParams.get("date")
 
     let urlVpMobil = baseUrl + "Klassen.xml"
@@ -18,16 +16,15 @@ export default {
     }
 
     // Forward / Proxy original request
-    let res = await fetch(urlVpMobil, {
+    const responseVp = await fetch(urlVpMobil, {
       method: "GET",
       headers: {"Authorization": "Basic " + btoa(login + ":" + password)}
     });
 
     // Add custom header(s)
-    res = new Response(res.body, res);
-    res.headers.append("Access-Control-Allow-Origin", "*")
+    const response = new Response(responseVp.body, responseVp);
+    response.headers.append("Access-Control-Allow-Origin", "*")
 
-    // Done
-    return res;
-  },
-};
+    return response;
+  }
+  

@@ -109,7 +109,7 @@ function setupTimetable(dataObj, teacherID) {
     "teacher-description"
   ).innerHTML = `<p class="fs-3 text-center">Persönlicher Stundenplan - <span class="fw-bold">${teacherID}</span>
   <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(
-    teacherID + import.meta.env.VITE_SEED
+    teacherID + import.meta.env.VITE_DICEBEAR
   )}" alt="avatar" width="64" height="64"/>
   </p>`;
 
