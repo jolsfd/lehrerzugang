@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "cf-dev": "npx wrangler pages dev -- vite"
+    "cf-dev": "wrangler pages dev -- vite"
   },
   "devDependencies": {
     "vite": "^4.4.5",
