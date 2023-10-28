@@ -101,6 +101,16 @@ function getZusatz(xmlDoc) {
   return zusatzElements[0].textContent;
 }
 
+function getTimestamp(xmlDoc) {
+  const timestampElements = xmlDoc.getElementsByTagName("zeitstempel");
+
+  if (timestampElements.length == 0) {
+    return "";
+  }
+
+  return timestampElements[0].textContent;
+}
+
 function getDateString(dayIndex) {
   const day = new Date(
     currentMonday().getTime() + dayIndex * (24 * 60 * 60 * 1000)
@@ -171,16 +181,19 @@ function getDayByTeacherID(teacherID, xmlDoc, dayIndex) {
       date: date,
       zusatz: "",
       lessons: null,
+      timestamp: "",
     };
   }
 
   const zusatz = getZusatz(xmlDoc);
+  const timestamp = getTimestamp(xmlDoc);
   const lessons = getLessons(xmlDoc, teacherID);
 
   return {
     date: date,
     zusatz: zusatz,
     lessons: lessons,
+    timestamp: timestamp,
   };
 }
 

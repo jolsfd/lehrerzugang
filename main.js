@@ -85,12 +85,21 @@ function getTableForDayHtml(day) {
   return tableHtml;
 }
 
+function getTimestampHtml(day){
+  if (!day.timestamp){
+    return ""
+  }
+
+  return `<p class="fw-light fs-6">${day.timestamp}</p>`
+}
+
 // input wert ist eine list mit index als stunde und stundenobjekt als element
 // TODO: sicherstellen, dass lessons immer liste ist wenn die leer ist, ist auch okay
 function getDayHtml(day) {
   const dayHtml = `
   <div>
     <p class="fs-4">${day.date}</p>
+    ${getTimestampHtml(day)}
     <p class="fw-bold text-danger">${day.zusatz}</p>
     ${getTableForDayHtml(day)}
   </div>

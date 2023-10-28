@@ -23,6 +23,8 @@ export async function onRequest(context) {
 
     // Add custom header(s)
     const response = new Response(responseVp.body, responseVp);
+    
+    // TODO: could be removed to make resources not publicly available
     response.headers.append("Access-Control-Allow-Origin", "*")
 
     return response;
